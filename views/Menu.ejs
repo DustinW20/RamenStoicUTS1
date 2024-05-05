@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ramen Stoic</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;300;400;700&display=swap" rel="stylesheet" />
+
+  <!-- Feather Icons   -->
+  <script src="https://unpkg.com/feather-icons"></script>
+
+  <!-- My Style -->
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+
+<body>
+  <!-- Navbar Start -->
+  <nav class="navbar">
+    <a href="#" class="navbar-logo">Ramen<span>Stoic</span>.</a>
+
+    <div class="navbar-nav">
+      <a href="/Home">Home</a>
+      <a href="/About">Tentang Kami</a>
+      <a href="/Menu">Menu</a>
+      <a href="Kontak">Kontak</a>
+      <a href="/Pemesanan">Pemesanan</a>
+    </div>
+
+    <div class="navbar-extra">
+      <a href="/cart" id="shopping-cart"><i data-feather="shopping-cart"></i></a>
+      <a href="#" id="hamburger-menu"><i data-feather="menu"></i></a>
+    </div>
+  </nav>
+  <!-- Navbar End -->
+
+  <!-- Menu Section start -->
+  <section id="menu" class="menu">
+    <h2><span>Menu</span> Kami</h2>
+    <p>
+    <h2>Silahkan Di Pilih </h2>
+    </p>
+
+    <input id="searchInput" style="width: 100%; margin: auto; padding: 10px 20px; border-radius: 10px;" type="text"
+      placeholder="Silahkan cari menu">
+
+    <div class="row">
+
+      <% menus.forEach(menu=> { %>
+        <div class="menu-card">
+          <img src="/img/menu/<%= menu.images %>" alt="Shoyu" class="menu-card-img" />
+          <h3 class="menu-card-title">
+            <%=menu.name %>
+          </h3>
+          <p class="menu-card-price">
+            <%= new Intl.NumberFormat('id-ID', { style: 'currency' , currency: 'IDR' }).format(menu.price) %>
+          </p>
+          <button class="btn" data-menu="<%= JSON.stringify(menu) %>">Tambahkan ke Keranjang</button>
+        </div>
+        <% }) %>
+    </div>
+  </section>
+  </section>
+  <!-- Feather Icons -->
+  <script>
+    feather.replace();
+  </script>
+
+  <!-- My Javascript -->
+  <script src="js/script.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      // Menambahkan event listener ke semua tombol Tambahkan ke Keranjang
+      const addToCartButtons = document.querySelectorAll('.btn[data-menu]');
+      addToCartButtons.forEach(button => {
+        button.addEventListener('click', function (event) {
+          const menuData = JSON.parse(event.target.getAttribute('data-menu'));
+          addToCart(menuData);
+        });
+      });
+
+      // Fungsi untuk menambahkan menu ke keranjang
+      function addToCart(menuData) {
+        // Dapatkan data menu dari localStorage
+        let cart = localStorage.getItem('cart') ? JSON.parse(localStorage.getItem('cart')) : {};
+
+        // Periksa apakah menu sudah ada di keranjang
+        if (cart[menuData._id]) {
+          cart[menuData._id].quantity += 1; // Jika sudah ada, tambahkan jumlahnya
+        } else {
+          cart[menuData._id] = {
+            name: menuData.name,
+            images: menuData.images,
+            price: menuData.price,
+            quantity: 1 // Jika belum ada, tambahkan menu baru ke keranjang dengan jumlah 1
+          };
+        }
+
+        // Simpan keranjang kembali ke localStorage
+        localStorage.setItem('cart', JSON.stringify(cart));
+
+        // Tampilkan pesan bahwa menu berhasil ditambahkan ke keranjang (opsional)
+        alert('Menu berhasil ditambahkan ke keranjang!');
+      }
+
+      const searchInput = document.getElementById('searchInput');
+      searchInput.addEventListener('input', function (event) {
+        const searchValue = event.target.value.toLowerCase(); // Ambil nilai dari input pencarian dan ubah menjadi huruf kecil
+        const menuCards = document.querySelectorAll('.menu-card');
+
+        // Loop melalui setiap kartu menu
+        menuCards.forEach(card => {
+          const menuTitle = card.querySelector('.menu-card-title').innerText.toLowerCase(); // Ambil teks judul menu dan ubah menjadi huruf kecil
+          // Jika judul menu mengandung nilai pencarian, tampilkan kartu menu; jika tidak, sembunyikan
+          if (menuTitle.includes(searchValue)) {
+            card.style.display = 'block';
+          } else {
+            card.style.display = 'none';
+          }
+        });
+      });
+
+
+    });
+
+
+  </script>
+
+  <!-- Menu Section end -->
+</body>
+
+</html>
